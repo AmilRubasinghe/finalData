@@ -1,9 +1,8 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
+    :items="mohData"
     dense
-    sort-by="calories"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -13,7 +12,7 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="700px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn color="primary" @click="editedIndex = -1, editedItem={}" dark class="mb-2" v-bind="attrs" v-on="on">
               Add New MOH Detais
             </v-btn>
           </template>
@@ -35,7 +34,7 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.calories"
+                      v-model="editedItem.district"
                       label="District"
                       outlined
                       dense
@@ -43,7 +42,7 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.fat"
+                      v-model="editedItem.mobile"
                       label="Mobile NO"
                       outlined
                       dense
@@ -53,7 +52,7 @@
                  <v-row dense>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.carbs"
+                      v-model="editedItem.address"
                       label="Address"
                       outlined
                       dense
@@ -61,7 +60,7 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.protein"
+                      v-model="editedItem.email"
                       label="Email"
                       outlined
                       dense
@@ -101,9 +100,7 @@
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
-    </template>
+   
   </v-data-table>
 </template>
 
@@ -112,35 +109,24 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    mohData:[],
     headers: [
       {
-        text: "Dessert (100g serving)",
+        text: "Name",
         align: "start",
         sortable: false,
         value: "name",
       },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
+      { text: "District", value: "district" },
+      { text: "Mobile Number", value: "mobile" },
+      { text: "Address", value: "address" },
+      { text: "Email", value: "email" },
       { text: "Actions", value: "actions", sortable: false },
     ],
     desserts: [],
     editedIndex: -1,
-    editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
-    defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
+    editedItem: {},
+
   }),
 
   computed: {
@@ -149,135 +135,74 @@ export default {
     },
   },
 
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
+  mounted() {
+    this.getMohData();
   },
 
-  created() {
-    this.initialize();
-  },
 
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
+        getMohData() {
+      this.$axios.$get(`/moh`).then(
+        (res) => {
+          console.log(res);
+          this.mohData = res;
         },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
-      ];
+        (error) => {}
+      );
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+     this.editedIndex = 1;
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+     
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
+             this.$axios.$delete('/moh/'+this.editedItem._id).then(
+        (res) => {
+           this.closeDelete();
+            this.getMohData();
+        },
+        (error) => {}
+      );
     },
 
     close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
+     this.dialog = false;
         this.editedIndex = -1;
-      });
     },
 
     closeDelete() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+     this.dialogDelete = false;
+      this.editedIndex = -1;
+      
     },
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        this.$axios.$patch('/moh/'+this.editedItem._id,this.editedItem).then(
+        (res) => {
+           this.close();
+            this.getMohData();
+        },
+        (error) => {}
+      );
       } else {
-        this.desserts.push(this.editedItem);
+        this.$axios.$post('/moh',this.editedItem).then(
+        (res) => {
+           this.close();
+            this.getMohData();
+        },
+        (error) => {}
+      );
       }
-      this.close();
+    
     },
   },
 };
