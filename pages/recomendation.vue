@@ -1,14 +1,26 @@
 <template>
-  <v-data-table :headers="headers" :items="phiData" dense class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :items="ontalogyData"
+    dense
+    class="elevation-1"
+  >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>PHI Details </v-toolbar-title>
+        <v-toolbar-title>Recomendation Details </v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="700px" persistent>
+        <v-dialog v-model="dialog" persistent max-width="700px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" @click="editedIndex = -1, editedItem={}" dark class="mb-2" v-bind="attrs" v-on="on">
-              Add New PHI Detais
+            <v-btn
+              color="primary"
+              @click="(editedIndex = -1), (editedItem = {})"
+              dark
+              class="mb-2"
+              v-bind="attrs"
+              v-on="on"
+            >
+              Add New Recomendation Detais
             </v-btn>
           </template>
           <v-card>
@@ -21,74 +33,53 @@
                 <v-row dense>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="PHI name"
+                      v-model="editedItem.case"
+                      label="Case"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.district"
-                      label="District"
+                      v-model="editedItem.disidedCriteria"
+                      label="Decided criteria"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
-                  <v-col>
+                   <v-col>
                     <v-text-field
-                      v-model="editedItem.mobile"
-                      label="Mobile NO"
+                      v-model="editedItem.catogory"
+                      label="Catagory"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row dense>
+               <v-row dense>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.address"
-                      label="Address"
+                      v-model="editedItem.recomendationEn"
+                      label="Recomendation(English)"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col>
                     <v-text-field
-                      v-model="editedItem.email"
-                      label="Email"
+                      v-model="editedItem.recomendationSi"
+                      label="Recomendation(Sinhala)"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                 <div class="my-2">For Sinhala Language</div>
-                <v-row dense>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.sinName"
-                      label="PHI name(Sinhala)"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.sinDistrict"
-                      label="District(Sinhala)"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.sinAddress"
-                      label="Address(Sinhala)"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                
+                <v-checkbox
+                  v-model="editedItem.isConform"
+                  label="Conform Question"
+                ></v-checkbox>
+               
               </v-container>
             </v-card-text>
 
@@ -106,7 +97,7 @@
             >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete()"
+              <v-btn color="blue darken-1" text @click="closeDelete"
                 >Cancel</v-btn
               >
               <v-btn color="blue darken-1" text @click="deleteItemConfirm"
@@ -122,7 +113,6 @@
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
-
   </v-data-table>
 </template>
 
@@ -131,32 +121,32 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    phiData: [],
+   ontalogyData: [],
     headers: [
       {
-        text: "Name",
+        text: "Case",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "case",
       },
-      { text: "Mobile No", value: "mobile" },
-      { text: "Email", value: "email" },
-      { text: "District", value: "district" },
-      { text: "Address", value: "address" },
-       {
-        text: "Name(Sinhala)",
+      { text: "Decided Criteria", value: "disidedCriteria" },
+      { text: "Recomendation(English)", value: "recomendationEn" },
+      { text: "Recomendation(Sinhala)", value: "recomendationSi" },
+      { text: "Catagory", value: "catogory" },
+      {
+        text: "Is Confrom",
         align: "start",
         sortable: false,
-        value: "sinName",
+        value: "isConform",
       },
-      { text: "District(Sinhala)", value: "sinDistrict" },
-       { text: "Address(Sinhala)", value: "sinAddress" },
+
       { text: "Actions", value: "actions", sortable: false },
     ],
 
     editedIndex: -1,
-    editedItem: {},
-    
+    editedItem: {
+        isConform:false
+    },
   }),
 
   computed: {
@@ -166,14 +156,15 @@ export default {
   },
 
   mounted() {
-    this.getPhiData();
+    this.getOntalogyData();
   },
+
   methods: {
-    getPhiData() {
-      this.$axios.$get(`/phi`).then(
+    getOntalogyData() {
+      this.$axios.$get(`/ontalogy`).then(
         (res) => {
           console.log(res);
-          this.phiData = res;
+          this.ontalogyData = res;
         },
         (error) => {}
       );
@@ -191,51 +182,50 @@ export default {
     },
 
     deleteItemConfirm() {
-          this.$axios.$delete('/phi/'+this.editedItem._id).then(
+      this.$axios.$delete("/ontalogy/" + this.editedItem._id).then(
         (res) => {
-           this.closeDelete();
-            this.getPhiData();
+          this.closeDelete();
+          this.getOntalogyData();
         },
         (error) => {}
       );
-     
     },
 
     close() {
       this.dialog = false;
-        this.editedIndex = -1;
+      this.editedIndex = -1;
     },
 
     closeDelete() {
       this.dialogDelete = false;
       this.editedIndex = -1;
-      
     },
 
     save() {
+    this.editedItem.isConform ? true:false
+    console.log(this.editedItem);
       if (this.editedIndex > -1) {
-       this.$axios.$patch('/phi/'+this.editedItem._id,this.editedItem).then(
-        (res) => {
-           this.close();
-            this.getPhiData();
-        },
-        (error) => {}
-      );
+        this.$axios
+          .$patch("/ontalogy/" + this.editedItem._id, this.editedItem)
+          .then(
+            (res) => {
+              this.close();
+              this.getOntalogyData();
+            },
+            (error) => {}
+          );
       } else {
-       this.$axios.$post('/phi',this.editedItem).then(
-        (res) => {
-           this.close();
-            this.getPhiData();
-        },
-        (error) => {}
-      );
+        this.$axios.$post("/ontalogy", this.editedItem).then(
+          (res) => {
+            this.close();
+            this.getOntalogyData();
+          },
+          (error) => {}
+        );
       }
-    
     },
   },
 };
 </script>
-
-<style></style>
 
 <style></style>

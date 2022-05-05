@@ -1,14 +1,26 @@
 <template>
-  <v-data-table :headers="headers" :items="phiData" dense class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :items="genaralData"
+    dense
+    class="elevation-1"
+  >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>PHI Details </v-toolbar-title>
+        <v-toolbar-title>Genaral Details </v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="700px" persistent>
+        <v-dialog v-model="dialog" persistent max-width="700px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" @click="editedIndex = -1, editedItem={}" dark class="mb-2" v-bind="attrs" v-on="on">
-              Add New PHI Detais
+            <v-btn
+              color="primary"
+              @click="(editedIndex = -1), (editedItem = {})"
+              dark
+              class="mb-2"
+              v-bind="attrs"
+              v-on="on"
+            >
+              Add New Genaral Detais
             </v-btn>
           </template>
           <v-card>
@@ -21,74 +33,44 @@
                 <v-row dense>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="PHI name"
+                      v-model="editedItem.questionEn"
+                      label="Questions"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.district"
-                      label="District"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.mobile"
-                      label="Mobile NO"
+                      v-model="editedItem.answerEn"
+                      label="Answer"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
                 </v-row>
+                <div class="my-2">For Sinhala Language</div>
                 <v-row dense>
                   <v-col>
                     <v-text-field
-                      v-model="editedItem.address"
-                      label="Address"
+                      v-model="editedItem.questionSin"
+                      label="Question(Sinhala)"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col>
                     <v-text-field
-                      v-model="editedItem.email"
-                      label="Email"
+                      v-model="editedItem.answerSin"
+                      label="Answer(Sinhala)"
                       outlined
                       dense
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                 <div class="my-2">For Sinhala Language</div>
-                <v-row dense>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.sinName"
-                      label="PHI name(Sinhala)"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.sinDistrict"
-                      label="District(Sinhala)"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="editedItem.sinAddress"
-                      label="Address(Sinhala)"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                <v-checkbox
+                  v-model="editedItem.isConform"
+                  label="Conform Question"
+                ></v-checkbox>
               </v-container>
             </v-card-text>
 
@@ -106,7 +88,7 @@
             >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete()"
+              <v-btn color="blue darken-1" text @click="closeDelete"
                 >Cancel</v-btn
               >
               <v-btn color="blue darken-1" text @click="deleteItemConfirm"
@@ -122,7 +104,6 @@
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
-
   </v-data-table>
 </template>
 
@@ -131,32 +112,31 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    phiData: [],
+    genaralData: [],
     headers: [
       {
-        text: "Name",
+        text: "Questions(English)",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "questionEn",
       },
-      { text: "Mobile No", value: "mobile" },
-      { text: "Email", value: "email" },
-      { text: "District", value: "district" },
-      { text: "Address", value: "address" },
-       {
-        text: "Name(Sinhala)",
+      { text: "Questions(Sinhala)", value: "questionSin" },
+      { text: "Answer(English)", value: "answerEn" },
+      { text: "Answer(Sinhala)", value: "answerSin" },
+      {
+        text: "Is Confrom",
         align: "start",
         sortable: false,
-        value: "sinName",
+        value: "isConform",
       },
-      { text: "District(Sinhala)", value: "sinDistrict" },
-       { text: "Address(Sinhala)", value: "sinAddress" },
+
       { text: "Actions", value: "actions", sortable: false },
     ],
 
     editedIndex: -1,
-    editedItem: {},
-    
+    editedItem: {
+        isConform:false
+    },
   }),
 
   computed: {
@@ -166,14 +146,15 @@ export default {
   },
 
   mounted() {
-    this.getPhiData();
+    this.getGenaralData();
   },
+
   methods: {
-    getPhiData() {
-      this.$axios.$get(`/phi`).then(
+    getGenaralData() {
+      this.$axios.$get(`/genaral`).then(
         (res) => {
           console.log(res);
-          this.phiData = res;
+          this.genaralData = res;
         },
         (error) => {}
       );
@@ -191,51 +172,50 @@ export default {
     },
 
     deleteItemConfirm() {
-          this.$axios.$delete('/phi/'+this.editedItem._id).then(
+      this.$axios.$delete("/genaral/" + this.editedItem._id).then(
         (res) => {
-           this.closeDelete();
-            this.getPhiData();
+          this.closeDelete();
+          this.getGenaralData();
         },
         (error) => {}
       );
-     
     },
 
     close() {
       this.dialog = false;
-        this.editedIndex = -1;
+      this.editedIndex = -1;
     },
 
     closeDelete() {
       this.dialogDelete = false;
       this.editedIndex = -1;
-      
     },
 
     save() {
+    this.editedItem.isConform ? true:false
+    console.log(this.editedItem);
       if (this.editedIndex > -1) {
-       this.$axios.$patch('/phi/'+this.editedItem._id,this.editedItem).then(
-        (res) => {
-           this.close();
-            this.getPhiData();
-        },
-        (error) => {}
-      );
+        this.$axios
+          .$patch("/genaral/" + this.editedItem._id, this.editedItem)
+          .then(
+            (res) => {
+              this.close();
+              this.getGenaralData();
+            },
+            (error) => {}
+          );
       } else {
-       this.$axios.$post('/phi',this.editedItem).then(
-        (res) => {
-           this.close();
-            this.getPhiData();
-        },
-        (error) => {}
-      );
+        this.$axios.$post("/genaral", this.editedItem).then(
+          (res) => {
+            this.close();
+            this.getGenaralData();
+          },
+          (error) => {}
+        );
       }
-    
     },
   },
 };
 </script>
-
-<style></style>
 
 <style></style>

@@ -9,14 +9,14 @@
                 {{ platformName }}
               </h3>
               <v-flex>
-                <v-img
+                <!-- <v-img
                   :alt="platformName"
                   class="ml-3"
                   contain
                   height="48px"
                   position="center right"
                   src="https://www.mobygames.com/images/i/12/25/1435075.png"
-                ></v-img>
+                ></v-img> -->
               </v-flex>
             </v-layout>
           </v-card-title>
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { mapState ,mapActions } from "vuex";
 export default {
   layout: "nodrawer",
   data() {
@@ -64,11 +65,22 @@ export default {
       username: null,
     };
   },
+
   methods:{
+     ...mapActions([
+      "toogleIsMoh",
+      "toogleIsDocter",
+    ]),
     login(){
-      if(this.username=="test" && this.password == "test"){
+      if(this.username=="moh" && this.password == "moh"){
         this.$router.push({ path: '/moh' })
-        console.log("test");
+        this.toogleIsMoh(true)
+        console.log("test1");
+      }
+      else if(this.username=="docter" && this.password == "docter"){
+         this.$router.push({ path: '/recomendation' })
+        this.toogleIsDocter(true)
+        console.log("test2");
       }
     }
   }

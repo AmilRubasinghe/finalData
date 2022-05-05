@@ -10,7 +10,7 @@
         <v-toolbar-title>Moh Office Details </v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="700px">
+        <v-dialog v-model="dialog" persistent max-width="700px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" @click="editedIndex = -1, editedItem={}" dark class="mb-2" v-bind="attrs" v-on="on">
               Add New MOH Detais
@@ -62,6 +62,33 @@
                     <v-text-field
                       v-model="editedItem.email"
                       label="Email"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <div class="my-2">For Sinhala Language</div>
+                <v-row dense>
+                  <v-col>
+                    <v-text-field
+                      v-model="editedItem.sinName"
+                      label="Moh ofice name(Sinhala)"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="editedItem.sinDistrict"
+                      label="District(Sinhala)"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="editedItem.sinAddress"
+                      label="Address(Sinhala)"
                       outlined
                       dense
                     ></v-text-field>
@@ -120,6 +147,14 @@ export default {
       { text: "District", value: "district" },
       { text: "Mobile Number", value: "mobile" },
       { text: "Address", value: "address" },
+      {
+        text: "Name(Sinhala)",
+        align: "start",
+        sortable: false,
+        value: "sinName",
+      },
+      { text: "District(Sinhala)", value: "sinDistrict" },
+       { text: "Address(Sinhala)", value: "sinAddress" },
       { text: "Email", value: "email" },
       { text: "Actions", value: "actions", sortable: false },
     ],
